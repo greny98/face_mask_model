@@ -16,7 +16,7 @@ AUTOTUNE = tf.data.AUTOTUNE
 
 def create_image_info(kaggle_dir, medical_dir):
     info = read_kaggle_mask(join(kaggle_dir, 'annotations'), join(kaggle_dir, 'images'), {})
-    # info = read_medical_mask(join(medical_dir, 'annotations'), join(medical_dir, 'images'), info)
+    info = read_medical_mask(join(medical_dir, 'annotations'), join(medical_dir, 'images'), info)
     return info
 
 
