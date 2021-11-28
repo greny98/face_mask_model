@@ -33,7 +33,6 @@ if __name__ == '__main__':
     train_ds, val_ds = DetectionGenerator(info, label_encoder, batch_size=args["batch_size"])
     # Create Model
     ssd_model = create_ssd_model()
-    # ssd_model.load_weights("ckpt/classification/checkpoint").expect_partial()
     loss_fn = RetinaNetLoss(num_classes=4)
     ssd_model.compile(
         loss=loss_fn,

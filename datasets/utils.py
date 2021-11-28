@@ -16,7 +16,7 @@ AUTOTUNE = tf.data.AUTOTUNE
 
 def create_image_info(kaggle_dir, medical_dir):
     info = read_kaggle_mask(join(kaggle_dir, 'annotations'), join(kaggle_dir, 'images'), {})
-    info = read_medical_mask(join(medical_dir, 'annotations'), join(medical_dir, 'images'), info)
+    # info = read_medical_mask(join(medical_dir, 'annotations'), join(medical_dir, 'images'), info)
     return info
 
 
@@ -44,10 +44,11 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool):
         decoded = tf.image.decode_jpeg(image_raw, channels=3)
         h, w, c = decoded.numpy().shape
         for i, bbox in enumerate(bboxes[:n_bbox]):
-            bbox[0] = np.min(bbox[0], w)
-            bbox[2] = np.min(bbox[2], w)
-            bbox[1] = np.min(bbox[1], h)
-            bbox[3] = np.min(bbox[3], h)
+            print(bbox)
+            bbox[0] = np.minimum(bbox[0], w)
+            bbox[2] = np.minimum(bbox[2], w)
+            bbox[1] = np.minimum(bbox[1], h)
+            bbox[3] = np.minimum(bbox[3], h)
             trans_bbox = list(bbox)
             trans_bbox.append(object_names[labels[i] - 1])
             trans_bboxes.append(trans_bbox)
