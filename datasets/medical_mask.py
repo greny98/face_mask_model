@@ -20,5 +20,6 @@ def read_medical_mask(annotation, images_dir, target: dict):
                 if label is not None:
                     image_info["bboxes"].append(anno["BoundingBox"])
                     image_info["labels"].append(label)
-        target[join(images_dir, info["FileName"])] = image_info
+            if len(image_info["labels"]) > 0:
+                target[join(images_dir, info["FileName"])] = image_info
     return target
