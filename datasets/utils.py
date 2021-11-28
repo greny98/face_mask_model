@@ -26,7 +26,7 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool):
             augment.ImageCompression(quality_lower=80, quality_upper=100),
             augment.HorizontalFlip(),
             augment.VerticalFlip(),
-            augment.RandomRotate90(),
+            # augment.RandomRotate90(),
             augment.RandomBrightnessContrast(brightness_limit=0.3, contrast_limit=0.3),
             augment.ShiftScaleRotate(shift_limit=0.015, scale_limit=0.015, rotate_limit=15),
             augment.GaussNoise(),
