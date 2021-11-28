@@ -44,10 +44,13 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool):
         decoded = tf.image.decode_jpeg(image_raw, channels=3)
         h, w, c = decoded.numpy().shape
         for i, bbox in enumerate(bboxes[:n_bbox]):
-            bbox[0] = np.minimum(bbox[0], w)
-            bbox[2] = np.minimum(bbox[2], w)
-            bbox[1] = np.minimum(bbox[1], h)
-            bbox[3] = np.minimum(bbox[3], h)
+            # bbox[0] = np.minimum(bbox[0], w)
+            # bbox[2] = np.minimum(bbox[2], w)
+            # bbox[1] = np.minimum(bbox[1], h)
+            # bbox[3] = np.minimum(bbox[3], h)
+            if (bbox[0] == bbox[2] or bbox[1] == bbox[3] or
+                    bbox[0] > w or bbox[2] > w or bbox[1] > h or bbox[3] > h):
+                print("== image_file", image_file)
             trans_bbox = list(bbox)
             trans_bbox.append(object_names[labels[i] - 1])
             trans_bboxes.append(trans_bbox)
