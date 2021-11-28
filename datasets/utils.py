@@ -41,11 +41,17 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool):
         trans_bboxes = []
         bboxes = bboxes[:n_bbox]
         labels = labels[:n_bbox]
+        decoded = tf.image.decode_jpeg(image_raw, channels=3)
+        h, w, c = decoded.numpy().shape
         for i, bbox in enumerate(bboxes[:n_bbox]):
+            bbox[0] = np.min(bbox[0], w)
+            bbox[2] = np.min(bbox[2], w)
+            bbox[1] = np.min(bbox[1], h)
+            bbox[3] = np.min(bbox[3], h)
             trans_bbox = list(bbox)
             trans_bbox.append(object_names[labels[i] - 1])
             trans_bboxes.append(trans_bbox)
-        decoded = tf.image.decode_jpeg(image_raw, channels=3)
+
         data = {'image': decoded.numpy(), 'bboxes': trans_bboxes}
         transformed = transform(**data)
         # extract transformed image
@@ -104,7 +110,8 @@ def DetectionGenerator(images_info: dict, label_encoder, batch_size=10):
     train_ds = ds.take(n_train)
     val_ds = ds.skip(n_train)
     train_ds = train_ds.shuffle(512, reshuffle_each_iteration=True).map(lambda x, y: process_data(x, y, training=True),
-                            num_parallel_calls=AUTOTUNE).batch(batch_size).prefetch(AUTOTUNE)
+                                                                        num_parallel_calls=AUTOTUNE).batch(
+        batch_size).prefetch(AUTOTUNE)
     val_ds = val_ds.map(lambda x, y: process_data(x, y, training=False),
                         num_parallel_calls=AUTOTUNE).batch(batch_size).prefetch(AUTOTUNE)
     return train_ds, val_ds
