@@ -13,7 +13,7 @@ def parse_args():
     parser.add_argument('--kaggle_dir', type=str, default='data/kaggle_mask')
     parser.add_argument('--medical_dir', type=str, default='data/medical_mask')
     parser.add_argument('--lr', type=float, default=1e-4)
-    parser.add_argument('--output_dir', type=str, default='model')
+    parser.add_argument('--output_dir', type=str, default='ckpt')
     parser.add_argument('--log_dir', type=str, default='logs')
     args = vars(parser.parse_args())
     return args
