@@ -1,0 +1,5 @@
+numpy
+lxml
+opencv-python
+tensorflow
+albumentations
