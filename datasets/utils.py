@@ -28,7 +28,7 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool):
             augment.VerticalFlip(),
             # augment.RandomRotate90(),
             augment.RandomBrightnessContrast(brightness_limit=0.3, contrast_limit=0.3),
-            augment.ShiftScaleRotate(shift_limit=0.015, scale_limit=0.015, rotate_limit=15),
+            augment.ShiftScaleRotate(shift_limit=0.015, scale_limit=0.015, rotate_limit=25),
             augment.GaussNoise(),
             augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE, IMAGE_SIZE),
         ], bbox_params=augment.BboxParams(format='pascal_voc'))
