@@ -138,4 +138,5 @@ dmypy.json
 cython_debug/
 data/
 notebooks
-logs
+logs/
+ckpt/
