@@ -49,7 +49,7 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool):
             bbox[1] = np.minimum(bbox[1], h)
             bbox[3] = np.minimum(bbox[3], h)
             if bbox[0] == bbox[2] or bbox[1] == bbox[3]:
-                print("== image_file", image_file)
+                continue
             trans_bbox = list(bbox)
             trans_bbox.append(object_names[labels[i] - 1])
             trans_bboxes.append(trans_bbox)
