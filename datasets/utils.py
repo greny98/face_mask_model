@@ -28,7 +28,7 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool):
             augment.VerticalFlip(),
             augment.RandomRotate90(),
             augment.RandomBrightnessContrast(brightness_limit=0.3, contrast_limit=0.3),
-            augment.ShiftScaleRotate(shift_limit=0.025, scale_limit=0.025, rotate_limit=15),
+            augment.ShiftScaleRotate(shift_limit=0.015, scale_limit=0.015, rotate_limit=15),
             augment.GaussNoise(),
             augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE, IMAGE_SIZE),
         ], bbox_params=augment.BboxParams(format='pascal_voc'))
@@ -53,7 +53,10 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool):
             trans_bbox = list(bbox)
             trans_bbox.append(object_names[labels[i] - 1])
             trans_bboxes.append(trans_bbox)
-
+        if len(trans_bboxes) == 0:
+            print("==============")
+            print(image_file)
+            print("==============")
         data = {'image': decoded.numpy(), 'bboxes': trans_bboxes}
         transformed = transform(**data)
         # extract transformed image
@@ -111,8 +114,8 @@ def DetectionGenerator(images_info: dict, label_encoder, batch_size=10):
     n_train = int(0.9 * len(image_files))
     train_ds = ds.take(n_train)
     val_ds = ds.skip(n_train)
-    train_ds = train_ds.shuffle(512, reshuffle_each_iteration=True).map(lambda x, y: process_data(x, y, training=True),
-                                                                        num_parallel_calls=AUTOTUNE).batch(
+    train_ds = train_ds.shuffle(512, reshuffle_each_iteration=True)
+    train_ds = train_ds.map(lambda x, y: process_data(x, y, training=True), num_parallel_calls=AUTOTUNE).batch(
         batch_size).prefetch(AUTOTUNE)
     val_ds = val_ds.map(lambda x, y: process_data(x, y, training=False),
                         num_parallel_calls=AUTOTUNE).batch(batch_size).prefetch(AUTOTUNE)
