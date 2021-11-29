@@ -1,6 +1,9 @@
 import argparse
 from tensorflow.keras import optimizers, callbacks
-from data_utils.data_generator import create_image_info, DetectionGenerator
+
+from configs.pascal_configs import PASCAL_DICT, PASCAL_LABELS
+from data_utils.data_generator import DetectionGenerator
+from data_utils.pascal import read_pascal
 from model.anchor_boxes import LabelEncoder
 from model.losses import RetinaNetLoss
 from model.ssd import create_ssd_model
@@ -10,8 +13,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch_size', type=int, default=6)
     parser.add_argument('--epochs', type=int, default=50)
-    parser.add_argument('--kaggle_dir', type=str, default='data/kaggle_mask')
-    parser.add_argument('--medical_dir', type=str, default='data/medical_mask')
+    parser.add_argument('--annotations', type=str, default='data/pascal_voc/Annotations')
+    parser.add_argument('--images', type=str, default='data/pascal_voc/JPEGImages')
     parser.add_argument('--lr', type=float, default=1e-4)
     parser.add_argument('--output_dir', type=str, default='ckpt')
     parser.add_argument('--log_dir', type=str, default='logs')
@@ -28,16 +31,17 @@ def schedule(e, lr):
 if __name__ == '__main__':
     args = parse_args()
     print(args)
-    info = create_image_info(args['kaggle_dir'], args['medical_dir'])
+    info = read_pascal(args["annotations"], args["images"], PASCAL_DICT)
     label_encoder = LabelEncoder()
-    train_ds, val_ds = DetectionGenerator(info, label_encoder, batch_size=args["batch_size"])
+    train_ds, val_ds = DetectionGenerator(info, label_encoder, PASCAL_LABELS, batch_size=args["batch_size"])
     # Create Model
-    ssd_model = create_ssd_model()
-    loss_fn = RetinaNetLoss(num_classes=4)
+    num_classes = len(PASCAL_LABELS)
+    ssd_model = create_ssd_model(num_classes)
+    # ssd_model.summary()
+    loss_fn = RetinaNetLoss(num_classes=num_classes)
     ssd_model.compile(
         loss=loss_fn,
         optimizer=optimizers.Adam(learning_rate=args['lr']))
-
     ckpt_cb = callbacks.ModelCheckpoint(
         filepath=f"{args['output_dir']}/checkpoint",
         save_best_only=True,

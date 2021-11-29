@@ -1,7 +1,6 @@
-from lxml.etree import ElementTree
-from os.path import join
-from datasets.values import KAGGLE_MASK_LABELS
 import os
+from os.path import join
+from lxml.etree import ElementTree
 
 
 def xml_to_dict(filename) -> dict:
@@ -37,7 +36,7 @@ def xml_to_dict(filename) -> dict:
     return parse(root)
 
 
-def read_kaggle_mask(annotation, images_dir, target: dict):
+def read_pascal(annotation: str, images_dir: str, name_to_labels: dict, target: dict = {}) -> dict:
     for xml_file in os.listdir(annotation):
         if ".xml" not in xml_file:
             continue
@@ -51,6 +50,6 @@ def read_kaggle_mask(annotation, images_dir, target: dict):
             image_info["bboxes"].append([
                 bbox["xmin"], bbox["ymin"], bbox["xmax"], bbox["ymax"]
             ])
-            image_info["labels"].append(KAGGLE_MASK_LABELS[obj["name"]])
+            image_info["labels"].append(name_to_labels[obj["name"]])
         target[join(images_dir, anno["filename"])] = image_info
     return target

@@ -5,12 +5,11 @@ import numpy as np
 import albumentations as augment
 from tensorflow.keras.applications import densenet
 
-from datasets.kaggle_mask import read_kaggle_mask
-from datasets.medical_mask import read_medical_mask
-from datasets.values import object_names
+from configs.common_config import IMAGE_SIZE
+from data_utils.kaggle_mask import read_kaggle_mask
+from data_utils.medical_mask import read_medical_mask
 from model.anchor_boxes import LabelEncoder
 
-IMAGE_SIZE = 512
 AUTOTUNE = tf.data.AUTOTUNE
 
 
@@ -20,7 +19,7 @@ def create_image_info(kaggle_dir, medical_dir):
     return info
 
 
-def detect_augmentation(label_encoder: LabelEncoder, training: bool):
+def detect_augmentation(label_encoder: LabelEncoder, training: bool, object_names):
     if training:
         transform = augment.Compose([
             augment.ImageCompression(quality_lower=80, quality_upper=100),
@@ -81,7 +80,7 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool):
     return preprocess_image
 
 
-def DetectionGenerator(images_info: dict, label_encoder, batch_size=10):
+def DetectionGenerator(images_info: dict, label_encoder, object_names, batch_size=10):
     # Extract infomation from images_info
     image_files = [filename for filename in images_info.keys()]
     bboxes = [list(image['bboxes']) for image in images_info.values()]
@@ -104,7 +103,7 @@ def DetectionGenerator(images_info: dict, label_encoder, batch_size=10):
 
     # Create dataset with process
     def process_data(image_file, y, training):
-        aug_image, labels = tf.numpy_function(func=detect_augmentation(label_encoder, training),
+        aug_image, labels = tf.numpy_function(func=detect_augmentation(label_encoder, training, object_names),
                                               inp=[image_file, y[0], y[1], y[2]],
                                               Tout=[tf.float32, tf.float32])
         return aug_image, labels

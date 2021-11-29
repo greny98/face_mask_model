@@ -1,7 +1,8 @@
 import os
 import json
-from datasets.values import NAME_TO_LABEL
 from os.path import join
+
+from configs.mask_configs import NAME_TO_LABEL
 
 
 def read_medical_mask(annotation, images_dir, target: dict):

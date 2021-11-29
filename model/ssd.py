@@ -1,8 +1,7 @@
 from tensorflow.keras import layers, Model, regularizers
-
 from model.feature_pyramid import get_backbone, FeaturePyramid
 
-l2 = regularizers.l2(2.5e-5)
+l2 = regularizers.l2(1.5e-5)
 
 
 def build_head(feature, num_filters, name):
@@ -14,8 +13,7 @@ def build_head(feature, num_filters, name):
     return feature
 
 
-def ssd_head(features):
-    num_classes = 4
+def ssd_head(features, num_classes):
     num_anchor_boxes = 9
     classes_outs = []
     box_outputs = []
@@ -30,8 +28,8 @@ def ssd_head(features):
     return layers.Concatenate(axis=-1)([box_outputs, classes_outs])
 
 
-def create_ssd_model():
+def create_ssd_model(num_classes):
     backbone = get_backbone()
     pyramid = FeaturePyramid(backbone)
-    outputs = ssd_head(pyramid.outputs)
+    outputs = ssd_head(pyramid.outputs, num_classes)
     return Model(inputs=[pyramid.input], outputs=outputs)

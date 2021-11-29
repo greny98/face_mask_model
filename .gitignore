@@ -140,3 +140,4 @@ data/
 notebooks
 logs/
 ckpt/
+models/
