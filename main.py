@@ -1,5 +1,7 @@
 import argparse
 from tensorflow.keras import optimizers, callbacks
+
+from configs.mask_configs import object_names
 from data_utils.data_generator import create_image_info, DetectionGenerator
 from model.anchor_boxes import LabelEncoder
 from model.losses import RetinaNetLoss
@@ -30,9 +32,9 @@ if __name__ == '__main__':
     print(args)
     info = create_image_info(args['kaggle_dir'], args['medical_dir'])
     label_encoder = LabelEncoder()
-    train_ds, val_ds = DetectionGenerator(info, label_encoder, batch_size=args["batch_size"])
+    train_ds, val_ds = DetectionGenerator(info, label_encoder, object_names, batch_size=args["batch_size"])
     # Create Model
-    ssd_model = create_ssd_model()
+    ssd_model = create_ssd_model(4)
     loss_fn = RetinaNetLoss(num_classes=4)
     ssd_model.compile(
         loss=loss_fn,
