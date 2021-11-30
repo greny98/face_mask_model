@@ -10,7 +10,7 @@ class AnchorBoxes:
         self._aspect_ratios = [0.5, 1.0, 2.0]
         self._scales = [2 ** x for x in [0, 1 / 3, 2 / 3]]
         self._num_anchors = len(self._aspect_ratios) * len(self._scales)
-        step = int((IMAGE_SIZE - 32) / 4)
+        step = int((224 - 32) / 4)
         self._areas = [(x * step + 32) ** 2 for x in range(5)]
         self._strides = [2 ** i for i in range(3, 8)]
         self._anchor_dims = self._compute_dims()
@@ -133,7 +133,7 @@ class PredictionDecoder(layers.Layer):
             max_output_size_per_class=10,
             max_total_size=10,
             iou_threshold=0.5,
-            score_threshold=0.05,
+            score_threshold=0.5,
             clip_boxes=False,
         )
         # return cls_predictions, boxes

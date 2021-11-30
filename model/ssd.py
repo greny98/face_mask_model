@@ -1,12 +1,12 @@
 from tensorflow.keras import layers, Model, regularizers
 from model.feature_pyramid import get_backbone, FeaturePyramid
 
-l2 = regularizers.l2(1.5e-5)
+l2 = regularizers.l2(1e-5)
 
 
 def build_head(feature, name):
     for i in range(4):
-        feature = layers.Conv2D(256, 3, padding="same", name=name + '_conv' + str(i))(feature)
+        feature = layers.Conv2D(128, 3, padding="same", name=name + '_conv' + str(i))(feature)
         feature = layers.BatchNormalization(epsilon=1.001e-5)(feature)
         feature = layers.ReLU()(feature)
     return feature
