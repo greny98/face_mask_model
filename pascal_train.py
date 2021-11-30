@@ -37,7 +37,7 @@ if __name__ == '__main__':
     # Create Model
     num_classes = len(PASCAL_LABELS)
     ssd_model = create_ssd_model(num_classes)
-    ssd_model.summary()
+    # ssd_model.summary()
     loss_fn = RetinaNetLoss(num_classes=num_classes)
     ssd_model.compile(
         loss=loss_fn,

@@ -22,12 +22,12 @@ def create_image_info(kaggle_dir, medical_dir):
 def detect_augmentation(label_encoder: LabelEncoder, training: bool, object_names):
     if training:
         transform = augment.Compose([
-            augment.ImageCompression(quality_lower=80, quality_upper=100),
+            augment.ImageCompression(quality_lower=70, quality_upper=100),
+            augment.SmallestMaxSize(480),
             augment.HorizontalFlip(),
-            augment.VerticalFlip(),
             augment.RandomRotate90(),
-            augment.RandomBrightnessContrast(brightness_limit=0.4, contrast_limit=0.3),
-            augment.ShiftScaleRotate(shift_limit=0.015, scale_limit=0.015, rotate_limit=15),
+            augment.RandomBrightnessContrast(),
+            augment.ShiftScaleRotate(shift_limit=0.05, scale_limit=0.05, rotate_limit=15),
             augment.GaussNoise(),
             augment.GaussianBlur(),
             augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE, IMAGE_SIZE),
