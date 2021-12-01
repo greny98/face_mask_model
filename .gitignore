@@ -142,3 +142,4 @@ logs/
 ckpt/
 models/
 tflite_model/saved_model/
+saved_model/
