@@ -1,12 +1,14 @@
 from tensorflow.keras import layers, Model
-from tensorflow.keras.applications import mobilenet_v2
+from tensorflow.keras.applications import mobilenet_v2, densenet
 
 from configs.common_config import IMAGE_SIZE
 
 
 def get_backbone(input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)):
     base_net = mobilenet_v2.MobileNetV2(input_shape=input_shape, include_top=False, weights='imagenet')
-    extract_layers = ['block_4_project_BN', 'block_8_project_BN', 'block_16_project_BN']
+    # base_net = densenet.DenseNet121(input_shape=input_shape, include_top=False, weights='imagenet')
+    extract_layers = ['block_4_add', 'block_8_add', 'block_15_add']
+    # extract_layers = ['pool2_pool', 'pool3_pool', 'pool4_pool']
     feature_maps = [base_net.get_layer(name).output for name in extract_layers]
     return Model(inputs=[base_net.inputs], outputs=feature_maps)
 

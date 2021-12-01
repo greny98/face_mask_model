@@ -1,8 +1,10 @@
 import tensorflow as tf
+from keras.models import Model
 from tensorflow.keras import layers
 
 from configs.common_config import IMAGE_SIZE
 from model import box_utils
+from model.ssd import create_ssd_model
 
 
 class AnchorBoxes:
@@ -137,3 +139,14 @@ class PredictionDecoder(layers.Layer):
             clip_boxes=False,
         )
         # return cls_predictions, boxes
+
+
+def PredictModel(weights=None):
+    ssd_model = create_ssd_model(4)
+    if weights is not None:
+        ssd_model.load_weights(weights)
+    image = tf.keras.Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3,), name="image")
+    predictions = ssd_model(image, training=False)
+    detections = PredictionDecoder()(image, predictions)
+    inference_model = Model(inputs=image, outputs=detections)
+    return inference_model
