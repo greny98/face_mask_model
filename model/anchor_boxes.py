@@ -123,6 +123,7 @@ class PredictionDecoder(layers.Layer):
         boxes_transformed = box_utils.center_to_corners(boxes)
         return boxes_transformed
 
+    @tf.function
     def call(self, images, predictions):
         image_shape = tf.cast(tf.shape(images), dtype=tf.float32)
         anchor_boxes = self._anchor_boxes.create_anchors_boxes(image_shape[1], image_shape[2])
@@ -138,15 +139,3 @@ class PredictionDecoder(layers.Layer):
             score_threshold=0.5,
             clip_boxes=False,
         )
-        # return cls_predictions, boxes
-
-
-def PredictModel(weights=None):
-    ssd_model = create_ssd_model(4)
-    if weights is not None:
-        ssd_model.load_weights(weights)
-    image = tf.keras.Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3,), name="image")
-    predictions = ssd_model(image, training=False)
-    detections = PredictionDecoder()(image, predictions)
-    inference_model = Model(inputs=image, outputs=detections)
-    return inference_model

@@ -23,7 +23,7 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool, object_name
     if training:
         transform = augment.Compose([
             augment.ImageCompression(quality_lower=70, quality_upper=100),
-            augment.SmallestMaxSize(480),
+            augment.LongestMaxSize(480),
             augment.HorizontalFlip(),
             augment.RandomRotate90(),
             augment.RandomBrightnessContrast(),

@@ -1,11 +1,12 @@
 import cv2
 
 from configs.common_config import IMAGE_SIZE
-from model.anchor_boxes import PredictModel
 from keras import Model
 import tensorflow as tf
 from tensorflow.keras.applications import mobilenet_v2
 import time
+
+from model.inference import PredictModel
 
 
 def predict(model: Model, image):
@@ -33,7 +34,7 @@ def predict(model: Model, image):
 
 if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
-    model = PredictModel()
+    model = tf.saved_model.load("saved_model")
     while cap.isOpened():
         start = time.time()
         ret, frame = cap.read()
