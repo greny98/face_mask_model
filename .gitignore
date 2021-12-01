@@ -141,3 +141,4 @@ notebooks
 logs/
 ckpt/
 models/
+tflite_model/saved_model/
