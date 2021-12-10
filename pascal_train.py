@@ -43,7 +43,7 @@ if __name__ == '__main__':
         loss=loss_fn,
         optimizer=optimizers.Adam(learning_rate=args['lr']))
     ckpt_cb = callbacks.ModelCheckpoint(
-        filepath=f"{args['output_dir']}/checkpoint",
+        filepath=f"{args['output_dir']}/pascal/checkpoint",
         save_best_only=True,
         save_weights_only=True,
         monitor='val_loss')
