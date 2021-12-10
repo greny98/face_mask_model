@@ -5,7 +5,7 @@ from configs.mask_configs import object_names
 from data_utils.data_generator import create_image_info, DetectionGenerator
 from model.anchor_boxes import LabelEncoder
 from model.losses import RetinaNetLoss
-from model.ssd import create_ssd_model
+from model.ssd import create_ssd_model, create_face_mask_model
 
 
 def parse_args():
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     label_encoder = LabelEncoder()
     train_ds, val_ds = DetectionGenerator(info, label_encoder, object_names, batch_size=args["batch_size"])
     # Create Model
-    ssd_model = create_ssd_model(4)
+    ssd_model = create_face_mask_model('')
     loss_fn = RetinaNetLoss(num_classes=4)
     ssd_model.compile(
         loss=loss_fn,
