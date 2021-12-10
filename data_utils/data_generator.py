@@ -23,14 +23,14 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool, object_name
     if training:
         transform = augment.Compose([
             augment.ImageCompression(quality_lower=70, quality_upper=100),
-            augment.LongestMaxSize(480),
+            augment.LongestMaxSize(300),
             augment.HorizontalFlip(),
-            augment.RandomRotate90(),
             augment.RandomBrightnessContrast(),
-            augment.ShiftScaleRotate(shift_limit=0.05, scale_limit=0.05, rotate_limit=15),
+            augment.Rotate(),
             augment.GaussNoise(),
             augment.GaussianBlur(),
-            augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE, IMAGE_SIZE),
+            augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE, IMAGE_SIZE, p=0.5),
+            augment.Resize(IMAGE_SIZE, IMAGE_SIZE)
         ], bbox_params=augment.BboxParams(format='pascal_voc'))
     else:
         transform = augment.Compose([augment.Resize(IMAGE_SIZE, IMAGE_SIZE)],
