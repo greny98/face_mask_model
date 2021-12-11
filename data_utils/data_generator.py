@@ -109,7 +109,7 @@ def DetectionGenerator(images_info: dict, label_encoder, object_names, batch_siz
         return aug_image, labels
 
     ds = tf.data.Dataset.zip((image_files_slices, y_slices))
-    ds = ds.shuffle(1024)
+    ds = ds.shuffle(1024, seed=16)
     n_train = int(0.9 * len(image_files))
     train_ds = ds.take(n_train)
     val_ds = ds.skip(n_train)
