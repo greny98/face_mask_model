@@ -13,10 +13,17 @@ from model.inference import PredictModel
 def predict(model: Model, image_tensor):
     image_tensor = tf.image.resize(image_tensor, size=(IMAGE_SIZE, IMAGE_SIZE))
     image_tensor = image_tensor[tf.newaxis, ...]
-    # image_tensor /= 255.
-    image_tensor = densenet.preprocess_input(image_tensor)
-    results = model(image_tensor)
-    return results
+    image_tensor /= 255.
+    cls, boxes = model(image_tensor)
+    return tf.image.combined_non_max_suppression(
+        tf.expand_dims(boxes, axis=2),
+        cls,
+        max_output_size_per_class=10,
+        max_total_size=10,
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        clip_boxes=False,
+    )
 
 
 def draw_on_frame(frame, results):
