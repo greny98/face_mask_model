@@ -139,7 +139,7 @@ cython_debug/
 data/
 notebooks
 logs/
-ckpt/
+ckpt*
 models/
 tflite_model/saved_model/
 saved_model/
