@@ -123,19 +123,19 @@ class PredictionDecoder(layers.Layer):
         boxes_transformed = box_utils.center_to_corners(boxes)
         return boxes_transformed
 
-    @tf.function
     def call(self, images, predictions):
         image_shape = tf.cast(tf.shape(images), dtype=tf.float32)
         anchor_boxes = self._anchor_boxes.create_anchors_boxes(image_shape[1], image_shape[2])
         box_predictions = predictions[:, :, :4]
         cls_predictions = tf.nn.sigmoid(predictions[:, :, 4:])
         boxes = self._decode_box_predictions(anchor_boxes[None, ...], box_predictions)
-        return tf.image.combined_non_max_suppression(
-            tf.expand_dims(boxes, axis=2),
-            cls_predictions,
-            max_output_size_per_class=10,
-            max_total_size=10,
-            iou_threshold=0.5,
-            score_threshold=0.5,
-            clip_boxes=False,
-        )
+        # return tf.image.combined_non_max_suppression(
+        #     tf.expand_dims(boxes, axis=2),
+        #     cls_predictions,
+        #     max_output_size_per_class=10,
+        #     max_total_size=10,
+        #     iou_threshold=0.5,
+        #     score_threshold=0.5,
+        #     clip_boxes=False,
+        # )
+        return cls_predictions, boxes

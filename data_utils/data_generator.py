@@ -3,7 +3,7 @@ from os.path import join
 import tensorflow as tf
 import numpy as np
 import albumentations as augment
-from tensorflow.keras.applications import densenet
+from tensorflow.keras.applications import densenet, mobilenet_v2
 
 from configs.common_config import IMAGE_SIZE
 from data_utils.kaggle_mask import read_kaggle_mask
@@ -77,7 +77,6 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool, object_name
         labels = tf.convert_to_tensor(labels, tf.float32)
         labels = label_encoder.encode_sample(aug_img.shape, bboxes_transformed, labels)
         return [aug_img, labels]
-
     return preprocess_image
 
 
