@@ -62,8 +62,7 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool, object_name
         # extract transformed image
         aug_img = transformed['image']
         aug_img = tf.cast(aug_img, tf.float32)
-        aug_img = densenet.preprocess_input(aug_img)
-        aug_img = tf.cast(aug_img, tf.float32)
+        aug_img = aug_img / 127.5 - 1.
 
         # extract transformed bboxes
         bboxes_transformed = []
@@ -77,6 +76,7 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool, object_name
         labels = tf.convert_to_tensor(labels, tf.float32)
         labels = label_encoder.encode_sample(aug_img.shape, bboxes_transformed, labels)
         return [aug_img, labels]
+
     return preprocess_image
 
 
