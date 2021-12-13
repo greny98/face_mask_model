@@ -5,9 +5,9 @@ from model.inference import PredictModel
 from model.ssd import create_ssd_model
 
 if __name__ == '__main__':
-    if not exists("ckpt/checkpoint"):
-        raise FileNotFoundError
-    model = PredictModel(4, "ckpt1/checkpoint")
+    # if not exists("ckpt/checkpoint"):
+    #     raise FileNotFoundError
+    model = PredictModel(4, "ckpt_256/checkpoint")
 
     tf.saved_model.save(model, "saved_model")
     # converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_dir="tflite_model/saved_model")

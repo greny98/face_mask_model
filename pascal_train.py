@@ -23,9 +23,9 @@ def parse_args():
 
 
 def schedule(e, lr):
-    if e <= 5 and e % 3 != 0:
+    if e < 4 or e % 4 != 0:
         return lr
-    return 0.975 * lr
+    return 0.925 * lr
 
 
 if __name__ == '__main__':

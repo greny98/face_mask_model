@@ -21,7 +21,7 @@ def predict(model: Model, image_tensor):
         max_output_size_per_class=10,
         max_total_size=10,
         iou_threshold=0.5,
-        score_threshold=0.5,
+        score_threshold=0.6,
         clip_boxes=False,
     )
 
