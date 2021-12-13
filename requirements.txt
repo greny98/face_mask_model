@@ -3,3 +3,4 @@ lxml
 opencv-python
 tensorflow
 albumentations
+scikit-multilearn

@@ -1,32 +1,20 @@
-from os.path import join
-
 import tensorflow as tf
 import numpy as np
 import albumentations as augment
-from tensorflow.keras.applications import densenet, mobilenet_v2
-
 from configs.common_config import IMAGE_SIZE
-from data_utils.kaggle_mask import read_kaggle_mask
-from data_utils.medical_mask import read_medical_mask
 from model.anchor_boxes import LabelEncoder
 
 AUTOTUNE = tf.data.AUTOTUNE
 
 
-def create_image_info(kaggle_dir, medical_dir):
-    info = read_kaggle_mask(join(kaggle_dir, 'annotations'), join(kaggle_dir, 'images'), {})
-    info = read_medical_mask(join(medical_dir, 'annotations'), join(medical_dir, 'images'), info)
-    return info
-
-
 def detect_augmentation(label_encoder: LabelEncoder, training: bool, object_names):
     if training:
         transform = augment.Compose([
-            augment.ImageCompression(quality_lower=70, quality_upper=100),
+            augment.ImageCompression(quality_lower=80, quality_upper=100),
             augment.LongestMaxSize(300),
             augment.HorizontalFlip(),
             augment.RandomBrightnessContrast(),
-            augment.Rotate(),
+            augment.Rotate(25),
             augment.GaussNoise(),
             augment.GaussianBlur(),
             augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE, IMAGE_SIZE, p=0.5),

@@ -1,11 +1,13 @@
 import argparse
+
+import pandas as pd
 from tensorflow.keras import optimizers, callbacks
 
 from configs.mask_configs import object_names
-from data_utils.data_generator import create_image_info, DetectionGenerator
+from data_utils.mask_generator import MaskGenerator, create_image_info
 from model.anchor_boxes import LabelEncoder
 from model.losses import RetinaNetLoss
-from model.ssd import create_ssd_model, create_face_mask_model
+from model.ssd import create_face_mask_model, create_ssd_model
 
 
 def parse_args():
@@ -16,6 +18,7 @@ def parse_args():
     parser.add_argument('--medical_dir', type=str, default='data/medical_mask')
     parser.add_argument('--lr', type=float, default=1e-4)
     parser.add_argument('--output_dir', type=str, default='ckpt')
+    parser.add_argument('--pascal_ckpt', type=str, default='ckpt')
     parser.add_argument('--log_dir', type=str, default='logs')
     args = vars(parser.parse_args())
     return args
@@ -31,10 +34,21 @@ if __name__ == '__main__':
     args = parse_args()
     print(args)
     info = create_image_info(args['kaggle_dir'], args['medical_dir'])
+    train_images = pd.read_csv('train.csv')['filename'].values
+    test_images = pd.read_csv('test.csv')['filename'].values
+    train_info = {
+        filename: info
+        for filename, info in info.items() if filename.split('/')[-1] in train_images}
+    val_info = {
+        filename: info
+        for filename, info in info.items() if filename.split('/')[-1] in test_images}
+
     label_encoder = LabelEncoder()
-    train_ds, val_ds = DetectionGenerator(info, label_encoder, object_names, batch_size=args["batch_size"])
+    train_ds = MaskGenerator(train_info, label_encoder, object_names, training=True, batch_size=args["batch_size"])
+    val_ds = MaskGenerator(val_info, label_encoder, object_names, training=False, batch_size=args["batch_size"])
     # Create Model
-    ssd_model = create_face_mask_model('')
+    # ssd_model = create_face_mask_model(args['pascal_ckpt'])
+    ssd_model = create_ssd_model(4)
     loss_fn = RetinaNetLoss(num_classes=4)
     ssd_model.compile(
         loss=loss_fn,
