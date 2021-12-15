@@ -7,8 +7,8 @@ l2 = regularizers.l2(1.5e-5)
 
 
 def build_head(feature, name):
-    for i in range(4):
-        feature = layers.Conv2D(128, 3, padding="same", name=name + '_conv' + str(i))(feature)
+    for i in range(2):
+        feature = layers.Conv2D(8, 3, padding="same", name=name + '_conv' + str(i))(feature)
         feature = layers.BatchNormalization(epsilon=1.001e-5, name=f'{name}_bn_{i}')(feature)
         feature = layers.ReLU()(feature)
     return feature
@@ -34,13 +34,13 @@ def create_ssd_model(num_classes):
     classes_outs = []
     box_outputs = []
     for idx, head in enumerate(box_heads):
-        detect_head = layers.Conv2D(num_anchor_boxes * 4, 3, padding="same",
+        detect_head = layers.Conv2D(num_anchor_boxes * 4, 1, padding="same",
                                     name='detect_head' + str(idx) + '_conv_out',
                                     kernel_regularizer=l2)(head)
         box_outputs.append(layers.Reshape([-1, 4])(detect_head))
 
     for idx, head in enumerate(classes_heads):
-        classify_head = layers.Conv2D(num_anchor_boxes * num_classes, 3, padding="same",
+        classify_head = layers.Conv2D(num_anchor_boxes * num_classes, 1, padding="same",
                                       name='classify_head' + str(idx) + '_conv_out',
                                       kernel_regularizer=l2)(head)
         classes_outs.append(layers.Reshape([-1, num_classes])(classify_head))

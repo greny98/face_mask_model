@@ -145,3 +145,4 @@ tflite_model/saved_model/
 saved_model/
 ckpt_256
 logs_256
+tflite_model

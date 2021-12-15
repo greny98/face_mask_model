@@ -47,8 +47,8 @@ if __name__ == '__main__':
     train_ds = MaskGenerator(train_info, label_encoder, object_names, training=True, batch_size=args["batch_size"])
     val_ds = MaskGenerator(val_info, label_encoder, object_names, training=False, batch_size=args["batch_size"])
     # Create Model
-    ssd_model = create_face_mask_model(args['pascal_ckpt'])
-    # ssd_model = create_ssd_model(4)
+    # ssd_model = create_face_mask_model(args['pascal_ckpt'])
+    ssd_model = create_ssd_model(4)
     loss_fn = RetinaNetLoss(num_classes=4)
     ssd_model.compile(
         loss=loss_fn,

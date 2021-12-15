@@ -13,6 +13,7 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool, object_name
             augment.ImageCompression(quality_lower=80, quality_upper=100),
             augment.LongestMaxSize(300),
             augment.HorizontalFlip(),
+            augment.ShiftScaleRotate(),
             augment.RandomBrightnessContrast(),
             augment.Rotate(25),
             augment.GaussNoise(),
