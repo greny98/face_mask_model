@@ -13,7 +13,7 @@ class AnchorBoxes:
         self._scales = [2 ** x for x in [0, 1 / 3, 2 / 3]]
         self._num_anchors = len(self._aspect_ratios) * len(self._scales)
         step = int((120 - 16) / 4)
-        self._areas = [(x * step + 24) ** 2 for x in range(4)]
+        self._areas = [(x * step + 16) ** 2 for x in range(4)]
         self._strides = [2 ** i for i in range(4, 8)]
         self._anchor_dims = self._compute_dims()
 
