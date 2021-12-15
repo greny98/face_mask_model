@@ -7,7 +7,7 @@ l2 = regularizers.l2(1.5e-5)
 
 
 def build_head(feature, name):
-    for i in range(2):
+    for i in range(3):
         feature = layers.Conv2D(8, 3, padding="same", name=name + '_conv' + str(i))(feature)
         feature = layers.BatchNormalization(epsilon=1.001e-5, name=f'{name}_bn_{i}')(feature)
         feature = layers.ReLU()(feature)
