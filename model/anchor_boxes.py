@@ -1,10 +1,7 @@
 import tensorflow as tf
-from keras.models import Model
 from tensorflow.keras import layers
 
-from configs.common_config import IMAGE_SIZE
 from model import box_utils
-from model.ssd import create_ssd_model
 
 
 class AnchorBoxes:
