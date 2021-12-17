@@ -11,11 +11,11 @@ def detect_augmentation(label_encoder: LabelEncoder, training: bool, object_name
     if training:
         transform = augment.Compose([
             augment.ImageCompression(quality_lower=80, quality_upper=100),
-            augment.LongestMaxSize(300),
+            augment.LongestMaxSize(224),
             augment.HorizontalFlip(),
-            augment.ShiftScaleRotate(),
+            # augment.ShiftScaleRotate(),
             augment.RandomBrightnessContrast(),
-            augment.Rotate(25),
+            augment.Rotate(10),
             augment.GaussNoise(),
             augment.GaussianBlur(),
             augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE, IMAGE_SIZE, p=0.5),
