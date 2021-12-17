@@ -1,7 +1,7 @@
 from tensorflow.keras import layers, Model
-from tensorflow.keras.applications import MobileNetV3Small
+from tensorflow.keras.applications import MobileNetV3Small, mobilenet_v2
 
-from configs.common_config import IMAGE_SIZE
+from configs.common_config import IMAGE_SIZE, EXTEND_CONV_FIlTER
 
 
 def get_backbone(input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)):
@@ -24,7 +24,7 @@ def pyramid_block(l_layers):
     return out_layers
 
 
-def FeaturePyramid(backbone: Model, filters=64):
+def FeaturePyramid(backbone: Model, filters=EXTEND_CONV_FIlTER):
     pool_out1, pool_out2, pool_out3 = backbone.outputs
     # Change all to 256 units
     pyr_out1 = layers.Conv2D(filters, 1, name='pyr_out1_conv1')(pool_out1)
@@ -34,10 +34,13 @@ def FeaturePyramid(backbone: Model, filters=64):
     pyr_out1, pyr_out2, pyr_out3 = pyramid_block(
         [pyr_out1, pyr_out2, pyr_out3])
     # after pyramid
-    pyr_out1 = layers.Conv2D(filters, 3, 1, padding='same', name='pyr_out1_conv2')(pyr_out1)
-    pyr_out2 = layers.Conv2D(filters, 3, 1, padding='same', name='pyr_out2_conv2')(pyr_out2)
-    pyr_out3 = layers.Conv2D(filters, 3, 1, padding='same', name='pyr_out3_conv2')(pyr_out3)
-    pyr_out4 = layers.DepthwiseConv2D(3, 2, "same", name='pyr_out4_conv2')(pyr_out3)
-    pyr_out5 = layers.DepthwiseConv2D(3, 2, "same", name='pyr_out5_conv2')(layers.ReLU()(pyr_out4))
+    pyr_out1 = layers.DepthwiseConv2D(3, 1, padding='same', name='pyr_out1_conv2')(pyr_out1)
+    pyr_out2 = layers.DepthwiseConv2D(3, 1, padding='same', name='pyr_out2_conv2')(pyr_out2)
+    pyr_out3 = layers.DepthwiseConv2D(3, 1, padding='same', name='pyr_out3_conv2')(pyr_out3)
+
+    pyr_out4 = layers.DepthwiseConv2D(3, 2, "same", name='pyr_out4_depthwise')(pyr_out3)
+    pyr_out4 = layers.Conv2D(filters, 1, 1, "same", name='pyr_out4_conv2')(pyr_out4)
+    pyr_out5 = layers.DepthwiseConv2D(3, 2, "same", name='pyr_out5_depthwise')(pyr_out4)
+    pyr_out5 = layers.Conv2D(filters, 1, 1, "same", name='pyr_out5_conv2')(layers.ReLU()(pyr_out5))
     return Model(inputs=[backbone.inputs],
                  outputs=[pyr_out1, pyr_out2, pyr_out3, pyr_out4, pyr_out5])

@@ -1,5 +1,6 @@
 from tensorflow.keras import layers, Model, regularizers
 
+from configs.common_config import EXTEND_CONV_FIlTER
 from configs.pascal_configs import PASCAL_LABELS
 from model.feature_pyramid import get_backbone, FeaturePyramid
 
@@ -8,7 +9,8 @@ l2 = regularizers.l2(1.5e-5)
 
 def build_head(feature, name):
     for i in range(4):
-        feature = layers.Conv2D(32, 3, padding="same", name=name + '_conv' + str(i))(feature)
+        feature = layers.DepthwiseConv2D(3, padding="same", name=name + '_depthwise' + str(i))(feature)
+        feature = layers.Conv2D(EXTEND_CONV_FIlTER, 1, padding="same", name=name + '_conv' + str(i))(feature)
         feature = layers.BatchNormalization(epsilon=1.001e-5, name=f'{name}_bn_{i}')(feature)
         feature = layers.ReLU()(feature)
     return feature
