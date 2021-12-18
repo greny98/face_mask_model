@@ -9,6 +9,7 @@ def get_backbone(input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)):
     # extract_layers = ['block_4_add', 'block_8_add', 'block_15_add']
     base_net = MobileNetV3Small(input_shape=input_shape, include_top=False, weights='imagenet')
     extract_layers = ['re_lu_7', 're_lu_20', 're_lu_31']
+
     feature_maps = [base_net.get_layer(name).output for name in extract_layers]
     return Model(inputs=[base_net.inputs], outputs=feature_maps)
 

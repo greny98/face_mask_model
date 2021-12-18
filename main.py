@@ -17,8 +17,8 @@ def parse_args():
     parser.add_argument('--kaggle_dir', type=str, default='data/kaggle_mask')
     parser.add_argument('--medical_dir', type=str, default='data/medical_mask')
     parser.add_argument('--lr', type=float, default=1e-4)
-    parser.add_argument('--output_dir', type=str, default='ckpt')
-    parser.add_argument('--pascal_ckpt', type=str, default='ckpt')
+    parser.add_argument('--output_dir', type=str, default='ckpt/face_mask')
+    parser.add_argument('--pascal_ckpt', type=str, default='ckpt/pascal/checkpoint')
     parser.add_argument('--log_dir', type=str, default='logs')
     args = vars(parser.parse_args())
     return args
@@ -47,8 +47,8 @@ if __name__ == '__main__':
     train_ds = MaskGenerator(train_info, label_encoder, object_names, training=True, batch_size=args["batch_size"])
     val_ds = MaskGenerator(val_info, label_encoder, object_names, training=False, batch_size=args["batch_size"])
     # Create Model
-    # ssd_model = create_face_mask_model(args['pascal_ckpt'])
-    ssd_model = create_ssd_model(4)
+    ssd_model = create_face_mask_model(args['pascal_ckpt'])
+    # ssd_model = create_ssd_model(4)
     loss_fn = RetinaNetLoss(num_classes=4)
     ssd_model.compile(
         loss=loss_fn,

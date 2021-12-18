@@ -12,7 +12,7 @@ def build_head(feature, name):
         feature = layers.DepthwiseConv2D(3, padding="same", name=name + '_depthwise' + str(i))(feature)
         feature = layers.Conv2D(EXTEND_CONV_FIlTER, 1, padding="same", name=name + '_conv' + str(i))(feature)
         feature = layers.BatchNormalization(epsilon=1.001e-5, name=f'{name}_bn_{i}')(feature)
-        feature = layers.ReLU()(feature)
+        feature = layers.ReLU(name=f"{name}_relu_{i}")(feature)
     return feature
 
 
@@ -39,7 +39,7 @@ def create_ssd_model(num_classes):
         detect_head = layers.Conv2D(num_anchor_boxes * 4, 1, padding="same",
                                     name='detect_head' + str(idx) + '_conv_out',
                                     kernel_regularizer=l2)(head)
-        box_outputs.append(layers.Reshape([-1, 4])(detect_head))
+        box_outputs.append(layers.Reshape([-1, 4], name='detect_reshape_' + str(idx))(detect_head))
 
     for idx, head in enumerate(classes_heads):
         classify_head = layers.Conv2D(num_anchor_boxes * num_classes, 1, padding="same",
@@ -48,16 +48,25 @@ def create_ssd_model(num_classes):
         classes_outs.append(layers.Reshape([-1, num_classes])(classify_head))
 
     classes_outs = layers.Concatenate(axis=1)(classes_outs)
-    box_outputs = layers.Concatenate(axis=1)(box_outputs)
+    box_outputs = layers.Concatenate(axis=1, name="concat_box_head")(box_outputs)
     outputs = layers.Concatenate(axis=-1)([box_outputs, classes_outs])
     return Model(inputs=[backbone.input], outputs=[outputs])
 
 
 def create_face_mask_model(pascal_ckpt):
-    coco_model = create_ssd_model(len(PASCAL_LABELS))
-    coco_model.load_weights(pascal_ckpt).expect_partial()
-    face_mask_model = create_ssd_model(4)
-    for l in face_mask_model.layers:
-        if ('classify_head' not in l.name) and ('_conv_out' not in l.name) and (len(l.weights) > 0):
-            l.set_weights(coco_model.get_layer(l.name).weights)
-    return face_mask_model
+    pascal_model = create_ssd_model(len(PASCAL_LABELS))
+    pascal_model.load_weights(pascal_ckpt).expect_partial()
+    box_outputs = pascal_model.get_layer("concat_box_head").output
+    classes_heads = [l.output for l in pascal_model.layers if (f"_relu_3" in l.name) and 'classify_head' in l.name]
+
+    num_classes = 4
+    num_anchor_boxes = 9
+    classes_outs = []
+    for idx, head in enumerate(classes_heads):
+        classify_head = layers.Conv2D(num_anchor_boxes * num_classes, 1, padding="same",
+                                      name='classify_head' + str(idx) + '_conv_out',
+                                      kernel_regularizer=l2)(head)
+        classes_outs.append(layers.Reshape([-1, num_classes])(classify_head))
+    classes_outs = layers.Concatenate(axis=1)(classes_outs)
+    outputs = layers.Concatenate(axis=-1)([box_outputs, classes_outs])
+    return Model(inputs=[pascal_model.input], outputs=[outputs])
