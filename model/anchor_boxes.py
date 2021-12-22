@@ -10,7 +10,7 @@ class AnchorBoxes:
         self._aspect_ratios = [0.5, 1.0, 2.0]
         self._scales = [2 ** x for x in [0, 1 / 3, 2 / 3]]
         self._num_anchors = len(self._aspect_ratios) * len(self._scales)
-        step = int((0.9 * IMAGE_SIZE - 16) / 4)
+        step = int((0.9 * IMAGE_SIZE - 12) / 4)
         self._areas = [(x * step + 16) ** 2 for x in range(5)]
         self._strides = [2 ** i for i in range(3, 8)]
         self._anchor_dims = self._compute_dims()

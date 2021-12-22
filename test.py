@@ -13,7 +13,7 @@ from model.inference import PredictModel
 def predict(model: Model, image_tensor):
     image_tensor = tf.image.resize(image_tensor, size=(IMAGE_SIZE, IMAGE_SIZE))
     image_tensor = image_tensor[tf.newaxis, ...]
-    image_tensor /= 255.
+    image_tensor = image_tensor / 127.5 - 1.
     cls, boxes = model(image_tensor)
     return tf.image.combined_non_max_suppression(
         tf.expand_dims(boxes, axis=2),
@@ -21,13 +21,15 @@ def predict(model: Model, image_tensor):
         max_output_size_per_class=10,
         max_total_size=10,
         iou_threshold=0.5,
-        score_threshold=0.6,
+        score_threshold=0.5,
         clip_boxes=False,
     )
 
 
 def draw_on_frame(frame, results):
     bboxes, scores, labels, valid = [elm.numpy()[0] for elm in results]
+    print(bboxes, scores, labels, valid)
+
     h, w, _ = frame.shape
     if valid > 0:
         for bbox, label in zip(bboxes, labels):
@@ -45,7 +47,7 @@ def draw_on_frame(frame, results):
 
 if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
-    model = tf.saved_model.load("saved_model")
+    model = tf.saved_model.load("tflite_model/saved_model")
     while cap.isOpened():
         start = time.time()
         ret, frame = cap.read()
