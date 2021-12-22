@@ -1,7 +1,6 @@
 """coco_ds dataset."""
 import tensorflow_datasets as tfds
 import fiftyone.zoo as foz
-import json
 
 # TODO(coco_ds): Markdown description  that will appear on the catalog page.
 from configs.coco_configs import coco_name2idx
