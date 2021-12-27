@@ -2,7 +2,7 @@ import argparse
 import data_utils.coco_ds
 from tensorflow.keras import optimizers, callbacks
 from data_utils.data_generator_large import DetectionGenerator
-from model.anchor_boxes import LabelEncoder
+from model.anchor_boxes_large import LabelEncoderLarge
 from model.losses import RetinaNetLoss
 from model.ssd import create_ssd_model
 import tensorflow_datasets as tfds
@@ -28,7 +28,7 @@ def schedule(e, lr):
 if __name__ == '__main__':
     args = parse_args()
     print(args)
-    label_encoder = LabelEncoder()
+    label_encoder = LabelEncoderLarge()
     train_ds, val_ds = tfds.load('coco_ds', split=['train', 'val'], shuffle_files=True)
     train_ds = DetectionGenerator(train_ds, label_encoder, batch_size=args["batch_size"], training=True)
     val_ds = DetectionGenerator(val_ds, label_encoder, batch_size=args["batch_size"], training=False)
