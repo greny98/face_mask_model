@@ -2,7 +2,7 @@ from tensorflow.keras import layers, Model, regularizers
 
 from configs.common_config import EXTEND_CONV_FIlTER
 from configs.pascal_configs import PASCAL_LABELS
-from model.feature_pyramid import get_backbone, FeaturePyramid
+from model.feature_pyramid import get_backbone, FeaturePyramid, BackboneLarge, FeaturePyramidLarge
 
 l2 = regularizers.l2(1.5e-5)
 
@@ -11,6 +11,14 @@ def build_head(feature, name):
     for i in range(4):
         feature = layers.DepthwiseConv2D(3, padding="same", name=name + '_depthwise' + str(i))(feature)
         feature = layers.Conv2D(EXTEND_CONV_FIlTER, 1, padding="same", name=name + '_conv' + str(i))(feature)
+        feature = layers.BatchNormalization(epsilon=1.001e-5, name=f'{name}_bn_{i}')(feature)
+        feature = layers.ReLU(name=f"{name}_relu_{i}")(feature)
+    return feature
+
+
+def build_head_large(feature, name):
+    for i in range(4):
+        feature = layers.Conv2D(EXTEND_CONV_FIlTER, 3, padding="same", name=name + '_conv' + str(i))(feature)
         feature = layers.BatchNormalization(epsilon=1.001e-5, name=f'{name}_bn_{i}')(feature)
         feature = layers.ReLU(name=f"{name}_relu_{i}")(feature)
     return feature
@@ -27,9 +35,13 @@ def ssd_head(features):
     return classes_outs, box_outputs
 
 
-def create_ssd_model(num_classes):
-    backbone = get_backbone()
-    pyramid = FeaturePyramid(backbone)
+def create_ssd_model(num_classes, large=False):
+    if large:
+        backbone = BackboneLarge()
+        pyramid = FeaturePyramidLarge(backbone, filters=128)
+    else:
+        backbone = get_backbone()
+        pyramid = FeaturePyramid(backbone)
     classes_heads, box_heads = ssd_head(pyramid.outputs)
 
     num_anchor_boxes = 9
