@@ -8,7 +8,7 @@ from configs.common_config import IMAGE_SIZE_LARGE
 def detect_augmentation(label_encoder, training):
     if training:
         transform = augment.Compose([
-            augment.LongestMaxSize(600),
+            augment.LongestMaxSize(400),
             augment.ImageCompression(quality_lower=75, quality_upper=100),
             augment.HorizontalFlip(p=0.3),
             augment.RandomBrightnessContrast(0.3, 0.3, p=0.4),
