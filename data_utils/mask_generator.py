@@ -72,8 +72,8 @@ def detect_augmentation(label_encoder, training):
         labels = tf.convert_to_tensor(labels, tf.float32)
         labels = label_encoder.encode_sample(aug_img.shape, bboxes_transformed, labels)
 
-        # return [aug_img, labels]
-        return [aug_img, bboxes_transformed]
+        return [aug_img, labels]
+        # return [aug_img, bboxes_transformed]
 
     return augmentation
 
