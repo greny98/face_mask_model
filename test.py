@@ -47,7 +47,7 @@ def draw_on_frame(frame, results):
 
 if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
-    model = tf.saved_model.load("tflite_model/saved_model")
+    model = tf.saved_model.load("saved_model")
     while cap.isOpened():
         start = time.time()
         ret, frame = cap.read()

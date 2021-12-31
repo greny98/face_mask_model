@@ -1,12 +1,6 @@
 import cv2
 
-cap = cv2.VideoCapture(2)
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
-    cv2.imshow("frame", frame)
-    key = cv2.waitKey(2)
-    if key & 0xFF == ord('q'):
-        break
+img = cv2.imread('data/medical_mask/images/5012.jpg')
+cv2.imshow("img", img)
+cv2.waitKey(0)
 cv2.destroyAllWindows()

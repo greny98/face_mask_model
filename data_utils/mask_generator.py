@@ -61,16 +61,19 @@ def detect_augmentation(label_encoder, training):
         aug_img = aug_img / 127.5 - 1
         # extract boxes
         bboxes_transformed = []
-        for x, y, w, h, _ in transformed['bboxes']:
-            cx = x + 0.5 * w
-            cy = y + 0.5 * w
+        for xmin, ymin, xmax, ymax, _ in transformed['bboxes']:
+            cx = 0.5 * (xmin + xmax)
+            cy = 0.5 * (ymin + ymax)
+            w = xmax - xmin
+            h = ymax - ymin
             bboxes_transformed.append(tf.convert_to_tensor([cx, cy, w, h], tf.float32))
 
         bboxes_transformed = tf.convert_to_tensor(bboxes_transformed, tf.float32)
         labels = tf.convert_to_tensor(labels, tf.float32)
         labels = label_encoder.encode_sample(aug_img.shape, bboxes_transformed, labels)
 
-        return [aug_img, labels]
+        # return [aug_img, labels]
+        return [aug_img, bboxes_transformed]
 
     return augmentation
 
