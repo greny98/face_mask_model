@@ -1,7 +1,7 @@
 import argparse
 import data_utils.coco_ds
 from tensorflow.keras import optimizers, callbacks
-from data_utils.data_generator import DetectionGenerator
+from data_utils.mask_generator import DetectionGenerator
 from model.anchor_boxes import LabelEncoder
 from model.losses import RetinaNetLoss
 from model.ssd import create_ssd_model
