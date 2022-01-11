@@ -64,14 +64,14 @@ def create_ssd_model(num_classes, large=False):
     return Model(inputs=[backbone.input], outputs=[outputs])
 
 
-def create_face_mask_model(coco_ckpt):
-    coco_model = create_ssd_model(80)
+def transfer_ssd(coco_ckpt, num_classes, large=False):
+    coco_model = create_ssd_model(80, large)
     coco_model.load_weights(coco_ckpt).expect_partial()
     coco_model.trainable = False
     box_outputs = coco_model.get_layer("concat_box_head").output
     classes_heads = [l.output for l in coco_model.layers if (f"_relu_3" in l.name) and 'classify_head' in l.name]
 
-    num_classes = 4
+    # num_classes = 4
     num_anchor_boxes = 9
     classes_outs = []
     for idx, head in enumerate(classes_heads):
@@ -82,3 +82,4 @@ def create_face_mask_model(coco_ckpt):
     classes_outs = layers.Concatenate(axis=1)(classes_outs)
     outputs = layers.Concatenate(axis=-1)([box_outputs, classes_outs])
     return Model(inputs=[coco_model.input], outputs=[outputs])
+

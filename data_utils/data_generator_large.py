@@ -10,9 +10,10 @@ def detect_augmentation(label_encoder, training):
         transform = augment.Compose([
             augment.LongestMaxSize(400),
             augment.ImageCompression(quality_lower=75, quality_upper=100),
-            augment.HorizontalFlip(p=0.3),
-            augment.RandomBrightnessContrast(0.3, 0.3, p=0.4),
-            # augment.Rotate(20),
+            augment.HorizontalFlip(),
+            augment.VerticalFlip(p=0.3),
+            augment.RandomBrightnessContrast(0.35, 0.35, p=0.4),
+            augment.Rotate(30),
             augment.GaussNoise(p=0.4),
             augment.GaussianBlur(p=0.4),
             augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE_LARGE, IMAGE_SIZE_LARGE, p=0.5),
