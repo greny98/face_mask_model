@@ -3,7 +3,7 @@ from tensorflow.keras import layers, Model, regularizers
 from configs.common_config import EXTEND_CONV_FIlTER
 from model.feature_pyramid import get_backbone, FeaturePyramid, BackboneLarge, FeaturePyramidLarge
 
-l2 = regularizers.l2(1.5e-5)
+l2 = regularizers.l2(5e-5)
 
 
 def build_head(feature, name):

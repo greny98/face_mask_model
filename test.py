@@ -3,10 +3,7 @@ import cv2
 from configs.common_config import IMAGE_SIZE
 from keras import Model
 import tensorflow as tf
-from tensorflow.keras.applications import densenet
 import time
-
-from model.inference import PredictModel
 
 
 @tf.function

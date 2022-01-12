@@ -17,28 +17,31 @@ _CITATION = """
 """
 
 
-def read_fire(annotation, target) -> dict:
-    FIRE = {"fire": 0, "smoke": 1}
-
+def read_fire(annotation, target: dict) -> dict:
+    FIRE = {"fire": 0}
     for xml_file in os.listdir(annotation):
         if ".xml" not in xml_file:
             continue
         anno = xml_to_dict(join(annotation, xml_file))
         image_info = {
-            "bboxes": [], "labels": [],
+            "bboxes": [],
+            "labels": [],
             'width': anno["size"]["width"],
             'height': anno["size"]["height"]}
+        if anno["size"]["width"] * anno["size"]["height"] <= 0:
+            continue
         for obj in anno["object"]:
+            if obj["name"].lower() not in FIRE.keys():
+                continue
             bbox = obj["bndbox"]
             image_info["bboxes"].append([
                 bbox["xmin"], bbox["ymin"], bbox["xmax"], bbox["ymax"]
             ])
-            if obj["name"].lower() not in FIRE.keys():
-                print(xml_file)
-                continue
-                # print(json.dumps(anno, indent=2))
             image_info["labels"].append(FIRE[obj["name"].lower()])
-        target[anno["filename"]] = image_info
+        if len(image_info["labels"]) > 0:
+            target[anno["filename"]] = image_info
+        else:
+            print(xml_file)
     return target
 
 
@@ -59,7 +62,7 @@ class FireDs(tfds.core.GeneratorBasedBuilder):
             features=tfds.features.FeaturesDict({
                 # These are the features of your dataset like images, labels ...
                 'image': tfds.features.Image(shape=(None, None, 3), encoding_format='jpeg'),
-                'labels': tfds.features.Sequence(tfds.features.ClassLabel(num_classes=4)),
+                'labels': tfds.features.Sequence(tfds.features.ClassLabel(num_classes=1)),
                 'bboxes': tfds.features.Sequence(tfds.features.BBoxFeature())
             }),
             citation=_CITATION,
