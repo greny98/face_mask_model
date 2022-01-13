@@ -3,7 +3,7 @@ from tensorflow.keras import layers, Model, regularizers
 from configs.common_config import EXTEND_CONV_FIlTER
 from model.feature_pyramid import get_backbone, FeaturePyramid, BackboneLarge, FeaturePyramidLarge
 
-l2 = regularizers.l2(5e-5)
+l2 = regularizers.l2(7.5e-5)
 
 
 def build_head(feature, name):
@@ -17,7 +17,7 @@ def build_head(feature, name):
 
 def build_head_large(feature, name):
     for i in range(4):
-        feature = layers.Conv2D(EXTEND_CONV_FIlTER, 3, padding="same", name=name + '_conv' + str(i))(feature)
+        feature = layers.Conv2D(128, 3, padding="same", name=name + '_conv' + str(i))(feature)
         feature = layers.BatchNormalization(epsilon=1.001e-5, name=f'{name}_bn_{i}')(feature)
         feature = layers.ReLU(name=f"{name}_relu_{i}")(feature)
     return feature

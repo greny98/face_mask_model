@@ -10,14 +10,13 @@ def detect_augmentation(label_encoder, training):
         transform = augment.Compose([
             augment.LongestMaxSize(400),
             augment.ImageCompression(quality_lower=75, quality_upper=100),
-            augment.HorizontalFlip(),
-            # augment.VerticalFlip(p=0.3),
-            augment.ShiftScaleRotate(),
-            augment.RandomBrightnessContrast(0.35, 0.35, p=0.4),
-            augment.Rotate(30),
+            augment.HorizontalFlip(p=0.3),
+            augment.VerticalFlip(p=0.3),
+            augment.ShiftScaleRotate(rotate_limit=60),
+            augment.RandomBrightnessContrast(0.3, 0.3, p=0.3),
             augment.GaussNoise(p=0.4),
             augment.GaussianBlur(p=0.4),
-            augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE_LARGE, IMAGE_SIZE_LARGE, p=0.5),
+            augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE_LARGE, IMAGE_SIZE_LARGE, p=0.3),
             augment.Resize(IMAGE_SIZE_LARGE, IMAGE_SIZE_LARGE),
         ], bbox_params=augment.BboxParams(format='pascal_voc'))
     else:
@@ -44,6 +43,8 @@ def detect_augmentation(label_encoder, training):
         # Add info
         data = {'image': image, 'bboxes': bboxes}
         transformed = transform(**data)
+        while len(transformed['bboxes']) == 0:
+            transformed = transform(**data)
         # extract transformed image
         aug_img = transformed['image']
         aug_img = tf.cast(aug_img, tf.float32)
@@ -56,7 +57,6 @@ def detect_augmentation(label_encoder, training):
             w = xmax - xmin
             h = ymax - ymin
             bboxes_transformed.append(tf.convert_to_tensor([cx, cy, w, h], tf.float32))
-
         bboxes_transformed = tf.convert_to_tensor(bboxes_transformed, tf.float32)
         labels = tf.convert_to_tensor(labels, tf.float32)
         labels = label_encoder.encode_sample(aug_img.shape, bboxes_transformed, labels)
