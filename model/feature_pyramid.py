@@ -50,10 +50,10 @@ def FeaturePyramid(backbone: Model, filters=EXTEND_CONV_FIlTER):
 
 
 def BackboneLarge(input_shape=(IMAGE_SIZE_LARGE, IMAGE_SIZE_LARGE, 3)):
-    base_net = densenet.DenseNet169(input_shape=input_shape, include_top=False, weights='imagenet')
-    extract_layers = ['pool2_pool', 'pool3_pool', 'pool4_pool']
-    # base_net = mobilenet_v2.MobileNetV2(input_shape=input_shape, include_top=False, weights='imagenet')
-    # extract_layers = ['block_4_add', 'block_8_add', 'block_15_add']
+    # base_net = densenet.DenseNet169(input_shape=input_shape, include_top=False, weights='imagenet')
+    # extract_layers = ['pool2_pool', 'pool3_pool', 'pool4_pool']
+    base_net = mobilenet_v2.MobileNetV2(input_shape=input_shape, include_top=False, weights='imagenet')
+    extract_layers = ['block_4_add', 'block_8_add', 'block_15_add']
     feature_maps = [base_net.get_layer(name).output for name in extract_layers]
     return Model(inputs=[base_net.inputs], outputs=feature_maps)
 
