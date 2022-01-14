@@ -24,11 +24,11 @@ def detect_augmentation(label_encoder, training):
             augment.ImageCompression(quality_lower=70, quality_upper=100),
             augment.ChannelShuffle(),
             augment.HorizontalFlip(),
-            augment.RandomRotate90(p=0.3),
+            augment.ShiftScaleRotate(rotate_limit=75),
             augment.RandomBrightnessContrast(0.35, 0.35),
-            augment.GaussNoise(p=0.4),
-            augment.GaussianBlur(p=0.4),
-            augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE, IMAGE_SIZE, p=0.5),
+            augment.GaussNoise(p=0.3),
+            augment.GaussianBlur(p=0.3),
+            augment.RandomSizedBBoxSafeCrop(IMAGE_SIZE, IMAGE_SIZE, p=0.3),
             augment.Resize(IMAGE_SIZE, IMAGE_SIZE),
         ], bbox_params=augment.BboxParams(format='pascal_voc'))
     else:
@@ -55,6 +55,8 @@ def detect_augmentation(label_encoder, training):
         # Add info
         data = {'image': image, 'bboxes': bboxes}
         transformed = transform(**data)
+        while len(transformed['bboxes']) == 0:
+            transformed = transform(**data)
         # extract transformed image
         aug_img = transformed['image']
         aug_img = tf.cast(aug_img, tf.float32)
