@@ -2,7 +2,7 @@
 import os
 from os.path import join
 from pathlib import Path
-
+# import cv2
 import pandas as pd
 import tensorflow_datasets as tfds
 
@@ -18,7 +18,7 @@ _CITATION = """
 
 
 def read_fire(annotation, target: dict) -> dict:
-    FIRE = {"fire": 0}
+    FIRE = {"fire": 0, "smoke": 1}
     for xml_file in os.listdir(annotation):
         if ".xml" not in xml_file:
             continue
@@ -28,8 +28,11 @@ def read_fire(annotation, target: dict) -> dict:
             "labels": [],
             'width': anno["size"]["width"],
             'height': anno["size"]["height"]}
-        if anno["size"]["width"] * anno["size"]["height"] <= 0:
-            continue
+        # if anno["size"]["width"] * anno["size"]["height"] <= 0:
+        #     image = cv2.imread(f"data/fire/images/{anno['filename']}")
+        #     h, w, _ = image.shape
+        #     image_info['width'] = w
+        #     image_info['height'] = h
         for obj in anno["object"]:
             if obj["name"].lower() not in FIRE.keys():
                 continue
@@ -62,7 +65,7 @@ class FireDs(tfds.core.GeneratorBasedBuilder):
             features=tfds.features.FeaturesDict({
                 # These are the features of your dataset like images, labels ...
                 'image': tfds.features.Image(shape=(None, None, 3), encoding_format='jpeg'),
-                'labels': tfds.features.Sequence(tfds.features.ClassLabel(num_classes=1)),
+                'labels': tfds.features.Sequence(tfds.features.ClassLabel(num_classes=2)),
                 'bboxes': tfds.features.Sequence(tfds.features.BBoxFeature())
             }),
             citation=_CITATION,

@@ -38,6 +38,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/venv/lib/python3.9/site-packages/sklearn/datasets/data/breast_cancer.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

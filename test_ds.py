@@ -13,3 +13,5 @@ for idx, data in enumerate(val_ds):
         cv2.rectangle(image, (int(xmin * w), int(ymin * h)), (int(xmax * w), int(ymax * h)), (0, 255, 0), 3)
     cv2.imshow('frame', image)
     cv2.waitKey(0)
+
+

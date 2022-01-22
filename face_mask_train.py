@@ -35,7 +35,7 @@ if __name__ == '__main__':
     val_ds = DetectionGenerator(val_ds, label_encoder, batch_size=args["batch_size"], training=False)
     # Create Model
     num_classes = 4
-    ssd_model = transfer_ssd(args['coco_ckpt'])
+    ssd_model = transfer_ssd(args['coco_ckpt'], num_classes)
     # ssd_model.summary()
     loss_fn = RetinaNetLoss(num_classes)
     ssd_model.compile(
